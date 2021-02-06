@@ -1,1 +1,23 @@
 **/backend-nudenet-demo/static
+
+# dependencies
+/frontend-nudenet-demo-reactjs/node_modules
+/frontend-nudenet-demo-reactjs/.pnp
+/frontend-nudenet-demo-reactjs/.pnp.js
+
+# testing
+/frontend-nudenet-demo-reactjs/coverage
+
+# production
+/frontend-nudenet-demo-reactjs/build
+
+# misc
+/frontend-nudenet-demo-reactjs/.DS_Store
+/frontend-nudenet-demo-reactjs/.env.local
+/frontend-nudenet-demo-reactjs/.env.development.local
+/frontend-nudenet-demo-reactjs/.env.test.local
+/frontend-nudenet-demo-reactjs/.env.production.local
+
+/frontend-nudenet-demo-reactjs/npm-debug.log*
+/frontend-nudenet-demo-reactjs/yarn-debug.log*
+/frontend-nudenet-demo-reactjs/yarn-error.log*
