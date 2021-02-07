@@ -4,8 +4,6 @@ import {
   List,
   Divider,
   ListItem,
-  ListItemText,
-  IconButton,
   Button,
   makeStyles,
   useTheme,
@@ -13,12 +11,14 @@ import {
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import HistoryItem from "components/HistoryItem";
-const drawerWidth = 300;
+const drawerWidth = 500;
+const host = "http://localhost:5000";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
+    position: "absolute",
   },
   drawerPaper: {
     width: drawerWidth,
@@ -32,9 +32,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function CustomDrawer({ onHandleClose, open }) {
+function CustomDrawer({ onHandleClose, open, historyItems }) {
   const classes = useStyles();
   const theme = useTheme();
+
   return (
     <Drawer
       className={classes.drawer}
@@ -61,17 +62,14 @@ function CustomDrawer({ onHandleClose, open }) {
       </div>
       <Divider />
       <List>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemText primary={text} />
+        {historyItems.map((item, index) => (
+          <ListItem key={index}>
+            <HistoryItem
+              imageName={item.name}
+              imageUrl={host + item.url}
+              size={item.size}
+              timeCreate={item.time_create}
+            />
           </ListItem>
         ))}
       </List>

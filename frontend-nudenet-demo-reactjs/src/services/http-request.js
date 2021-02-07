@@ -18,6 +18,9 @@ class HTTPReq {
       },
     });
   };
+  getHistories = () => {
+    return this.axiosReq.get("/histories");
+  };
   getTest() {
     return this.axiosReq.get("/", {
       headers: {

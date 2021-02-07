@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import * as Constant from "utils/constants";
 import HTTPRequest from "services/http-request";
 import {
   Paper,
@@ -9,9 +8,13 @@ import {
   Box,
   Container,
   Grid,
+  createMuiTheme,
+  MuiThemeProvider,
 } from "@material-ui/core";
 import PublishIcon from "@material-ui/icons/Publish";
 import Image from "material-ui-image";
+import { Lightbox } from "react-modal-image";
+import GroupActionButton from "components/GroupActionButton";
 
 const host = "http://localhost:5000";
 
@@ -24,11 +27,18 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
   },
   imageArea: {
-    maxWidth: "250",
-    maxHeight: "250",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 400,
+    height: 300,
+    [theme.breakpoints.down("sm")]: {
+      width: 280,
+      height: 210,
+    },
   },
   centerDropItem: {
     textAlign: "center",
@@ -38,9 +48,21 @@ const useStyles = makeStyles((theme) => ({
 function MainArea() {
   const RequestServer = new HTTPRequest();
   const classes = useStyles();
+  const theme = createMuiTheme({
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 650,
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+      },
+    },
+  });
 
   const [resultImageURL, setResultImageURL] = useState(null);
   const [originalImageURL, setOriginalImageURL] = useState(null);
+  const [openLightBox, setOpenLightBox] = useState(false);
 
   const onDrop = useCallback((acceptedFiles) => {
     setResultImageURL("");
@@ -48,68 +70,107 @@ function MainArea() {
       const imageURL = URL.createObjectURL(file);
       setOriginalImageURL(imageURL);
       await RequestServer.uploadImage(file)
-        .then((res) => setResultImageURL(host + res.data.result_image_url))
+        .then((res) => {
+          setResultImageURL(host + res.data.result_image_url);
+        })
         .catch((err) => setResultImageURL("error_url"));
     });
   }, []);
 
+  const onDownloadImage = () => {};
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: "image/jpeg, image/png",
+    accept: ".jpeg, .png, .jpg",
   });
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Paper
-            {...getRootProps()}
-            variant="outlined"
-            className={classes.dropArea}
-          >
-            <input {...getInputProps()} />
-            {isDragActive ? (
-              <Typography variant="overline">
-                Drop the image here ...
-              </Typography>
-            ) : (
-              <Box
-                justifyContent="center"
-                flexDirection="column"
-                alignItems="center"
-                className={classes.centerDropItem}
-              >
-                <Box>
-                  <PublishIcon color="primary" />
+    <MuiThemeProvider theme={theme}>
+      <Container className={classes.root} maxWidth="md">
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Paper
+              {...getRootProps()}
+              variant="outlined"
+              className={classes.dropArea}
+            >
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <Typography variant="overline">
+                  Drop the image here ...
+                </Typography>
+              ) : (
+                <Box
+                  justifyContent="center"
+                  flexDirection="column"
+                  alignItems="center"
+                  className={classes.centerDropItem}
+                >
+                  <Box>
+                    <PublishIcon color="primary" />
+                  </Box>
+                  <Box>
+                    <Typography variant="overline">
+                      Drag & drop image here, or click to select
+                    </Typography>
+                  </Box>
                 </Box>
-                <Box>
+              )}
+            </Paper>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box display="flex" flexDirection="column" alignItems="center">
+              <Typography variant="overline">Original Image</Typography>
+              <Paper className={classes.imageArea} elevation={0}>
+                {originalImageURL != null ? (
+                  <Image
+                    src={originalImageURL}
+                    aspectRatio={4 / 3}
+                    style={{ width: "100%" }}
+                  />
+                ) : (
                   <Typography variant="overline">
-                    Drag & drop image here, or click to select
+                    Upload an image first!
                   </Typography>
-                </Box>
-              </Box>
-            )}
-          </Paper>
+                )}
+              </Paper>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box display="flex" flexDirection="column" alignItems="center">
+              <Typography variant="overline">NudeNet Filtered Image</Typography>
+              <Paper className={classes.imageArea} elevation={0}>
+                {resultImageURL != null && (
+                  <>
+                    <Image
+                      src={resultImageURL}
+                      aspectRatio={4 / 3}
+                      style={{ width: "100%" }}
+                      onClick={() => setOpenLightBox(true)}
+                    />
+                    {openLightBox && (
+                      <Lightbox
+                        medium={resultImageURL}
+                        large={resultImageURL}
+                        hideDownload={true}
+                        showRotate={true}
+                        hideZoom={true}
+                        alt="View full screen"
+                        onClose={() => setOpenLightBox(false)}
+                      />
+                    )}
+                  </>
+                )}
+              </Paper>
+              <GroupActionButton
+                isDisable={["", "error_url", null].indexOf(resultImageURL) >= 0}
+                handleOpenLightBox={() => setOpenLightBox(true)}
+                handleDownloadImage={() => onDownloadImage()}
+              />
+            </Box>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <Typography variant="overline">Original Image</Typography>
-          <Paper>
-            {originalImageURL != null ? (
-              <Image src={originalImageURL} aspectRatio={4 / 3} />
-            ) : (
-              <Typography variant="body2">Input image first!!</Typography>
-            )}
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Typography variant="overline">NudeNet Filtered Image</Typography>
-          <Paper>
-            {resultImageURL != null && (
-              <Image src={resultImageURL} aspectRatio={4 / 3} />
-            )}
-          </Paper>
-        </Grid>
-      </Grid>
-    </div>
+      </Container>
+    </MuiThemeProvider>
   );
 }
 

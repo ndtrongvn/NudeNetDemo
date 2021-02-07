@@ -3,6 +3,8 @@ from flask import Flask, request, jsonify, send_file
 from werkzeug.utils import secure_filename
 from NudeNet.nudenet.detector import Detector
 from flask_cors import CORS
+from glob import glob
+import json
 
 app = Flask(__name__, static_url_path='/static')
 CORS(app)
@@ -17,6 +19,7 @@ if not os.path.exists(app.config['OUTPUT_FOLDER']):
     os.makedirs(app.config['OUTPUT_FOLDER'])
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+image_types = ('*.png', '*.jpg', '*.jpeg')
 
 def allowed_file(filename):
     exts = filename.rsplit('.', 1)[1].lower()
@@ -78,3 +81,35 @@ def process_file():
         
     else:
         return jsonify(error=True,message='Unsupport file!'), 400
+
+@app.route('/histories')
+def get_histories():
+    images = []
+    histories = []
+    response_datas = []
+    for type in image_types:
+        images.extend(glob(app.config['OUTPUT_FOLDER'] + type))
+    for im in images:
+        im_stat = os.stat(im)
+        head, tail = os.path.split(im)
+        im_path = '/static/outputs/' + tail
+        info = file_info(im_path, tail, im_stat.st_size, im_stat.st_mtime)
+        histories.append(info)
+    sorted_histories = sorted(histories, key=lambda x: x.time_create, reverse=True)
+    for hist in sorted_histories:
+        response_datas.append(hist.toJSON())
+    return jsonify(histories=response_datas)
+
+class file_info:
+    def __init__(self, url, name, size, time_create):
+        self.url = url
+        self.name = name
+        self.size= size
+        self.time_create = time_create
+    def toJSON(self):
+        return {
+            'url': self.url,
+            'name' : self.name,
+            'size' : self.size,
+            'time_create' : round(self.time_create)
+        }

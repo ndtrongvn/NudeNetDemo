@@ -5,10 +5,11 @@ import {
   Toolbar,
   Typography,
   Button,
+  Hidden,
 } from "@material-ui/core";
 import clsx from "clsx";
 
-import MenuIcon from "@material-ui/icons/Menu";
+import HistoryIcon from "@material-ui/icons/History";
 const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
@@ -54,9 +55,9 @@ function CustomAppBar({ onHandleOpenDrawer, open }) {
           edge="end"
           onClick={onHandleOpenDrawer}
           className={clsx(open && classes.hide)}
-          endIcon={<MenuIcon></MenuIcon>}
+          endIcon={<HistoryIcon></HistoryIcon>}
         >
-          Show history
+          <Hidden smDown>Show history</Hidden>
         </Button>
       </Toolbar>
     </AppBar>

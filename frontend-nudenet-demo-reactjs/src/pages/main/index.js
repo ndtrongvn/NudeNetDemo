@@ -1,13 +1,11 @@
 import React from "react";
 
-import { makeStyles, CssBaseline, Typography } from "@material-ui/core";
-
-import clsx from "clsx";
+import { makeStyles, CssBaseline } from "@material-ui/core";
 import CustomDrawer from "./CustomDrawer";
 import CustomAppBar from "./CustomAppBar";
 import MainArea from "./MainArea";
 
-const drawerWidth = 300;
+import HTTPRequest from "services/http-request";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    marginRight: -drawerWidth,
   },
   contentShift: {
     transition: theme.transitions.create("margin", {
@@ -40,8 +37,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Main = () => {
+  const RequestServer = new HTTPRequest();
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [historyItems, setHistoryItems] = React.useState([]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -50,6 +49,15 @@ const Main = () => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  React.useEffect(() => {
+    if (open) {
+      RequestServer.getHistories().then((res) => {
+        setHistoryItems(res.data.histories);
+      });
+    }
+  }, [open]);
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -58,7 +66,11 @@ const Main = () => {
         <div className={classes.drawerHeader} />
         <MainArea />
       </main>
-      <CustomDrawer onHandleClose={handleDrawerClose} open={open} />
+      <CustomDrawer
+        onHandleClose={handleDrawerClose}
+        open={open}
+        historyItems={historyItems}
+      />
     </div>
   );
 };
