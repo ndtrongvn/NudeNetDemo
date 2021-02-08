@@ -13,10 +13,8 @@ import {
 } from "@material-ui/core";
 import PublishIcon from "@material-ui/icons/Publish";
 import Image from "material-ui-image";
-import { Lightbox } from "react-modal-image";
 import GroupActionButton from "components/GroupActionButton";
-
-const host = "http://localhost:5000";
+import path from "path";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function MainArea() {
+function MainArea({ handleLightBoxOpen }) {
   const RequestServer = new HTTPRequest();
   const classes = useStyles();
   const theme = createMuiTheme({
@@ -62,7 +60,6 @@ function MainArea() {
 
   const [resultImageURL, setResultImageURL] = useState(null);
   const [originalImageURL, setOriginalImageURL] = useState(null);
-  const [openLightBox, setOpenLightBox] = useState(false);
 
   const onDrop = useCallback((acceptedFiles) => {
     setResultImageURL("");
@@ -71,18 +68,18 @@ function MainArea() {
       setOriginalImageURL(imageURL);
       await RequestServer.uploadImage(file)
         .then((res) => {
-          setResultImageURL(host + res.data.result_image_url);
+          setResultImageURL(
+            process.env.REACT_APP_DOMAIN + res.data.result_image_url
+          );
         })
         .catch((err) => setResultImageURL("error_url"));
     });
   }, []);
-
-  const onDownloadImage = () => {};
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: ".jpeg, .png, .jpg",
   });
+
   return (
     <MuiThemeProvider theme={theme}>
       <Container className={classes.root} maxWidth="md">
@@ -140,31 +137,22 @@ function MainArea() {
               <Typography variant="overline">NudeNet Filtered Image</Typography>
               <Paper className={classes.imageArea} elevation={0}>
                 {resultImageURL != null && (
-                  <>
-                    <Image
-                      src={resultImageURL}
-                      aspectRatio={4 / 3}
-                      style={{ width: "100%" }}
-                      onClick={() => setOpenLightBox(true)}
-                    />
-                    {openLightBox && (
-                      <Lightbox
-                        medium={resultImageURL}
-                        large={resultImageURL}
-                        hideDownload={true}
-                        showRotate={true}
-                        hideZoom={true}
-                        alt="View full screen"
-                        onClose={() => setOpenLightBox(false)}
-                      />
-                    )}
-                  </>
+                  <Image
+                    src={resultImageURL}
+                    aspectRatio={4 / 3}
+                    style={{ width: "100%" }}
+                    onClick={() => handleLightBoxOpen(resultImageURL)}
+                  />
                 )}
               </Paper>
               <GroupActionButton
                 isDisable={["", "error_url", null].indexOf(resultImageURL) >= 0}
-                handleOpenLightBox={() => setOpenLightBox(true)}
-                handleDownloadImage={() => onDownloadImage()}
+                onViewImage={() => handleLightBoxOpen(resultImageURL)}
+                downloadUrl={
+                  process.env.REACT_APP_DOMAIN +
+                  "/download/" +
+                  path.basename(resultImageURL)
+                }
               />
             </Box>
           </Grid>

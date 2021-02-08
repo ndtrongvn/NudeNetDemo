@@ -11,17 +11,23 @@ import {
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import HistoryItem from "components/HistoryItem";
+import path from "path";
 const drawerWidth = 500;
-const host = "http://localhost:5000";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
     position: "absolute",
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+    },
   },
   drawerPaper: {
     width: drawerWidth,
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+    },
   },
   drawerHeader: {
     display: "flex",
@@ -32,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function CustomDrawer({ onHandleClose, open, historyItems }) {
+function CustomDrawer({ onHandleClose, open, historyItems, onViewImage }) {
   const classes = useStyles();
   const theme = useTheme();
 
@@ -66,9 +72,15 @@ function CustomDrawer({ onHandleClose, open, historyItems }) {
           <ListItem key={index}>
             <HistoryItem
               imageName={item.name}
-              imageUrl={host + item.url}
+              imageUrl={process.env.REACT_APP_DOMAIN + item.url}
+              downloadUrl={
+                process.env.REACT_APP_DOMAIN +
+                "/download/" +
+                path.basename(item.url)
+              }
               size={item.size}
               timeCreate={item.time_create}
+              onViewImage={onViewImage}
             />
           </ListItem>
         ))}

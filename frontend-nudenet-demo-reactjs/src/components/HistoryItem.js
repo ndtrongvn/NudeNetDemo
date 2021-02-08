@@ -26,7 +26,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const HistoryItem = ({ imageUrl, imageName, size, timeCreate }) => {
+const HistoryItem = ({
+  imageUrl,
+  imageName,
+  size,
+  timeCreate,
+  downloadUrl,
+  onViewImage,
+}) => {
   const classes = useStyles();
   return (
     <Card className={classes.root}>
@@ -51,10 +58,14 @@ const HistoryItem = ({ imageUrl, imageName, size, timeCreate }) => {
         </CardContent>
       </div>
       <CardActions>
-        <Button size="small" color="primary">
+        <Button
+          size="small"
+          color="primary"
+          onClick={() => onViewImage(imageUrl)}
+        >
           Show
         </Button>
-        <Button size="small" color="primary">
+        <Button size="small" color="primary" href={downloadUrl}>
           Download
         </Button>
       </CardActions>

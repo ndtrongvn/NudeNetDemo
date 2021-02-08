@@ -1,4 +1,5 @@
 **/backend-nudenet-demo/static
+**/backend-nudenet-demo/venv/*
 
 # dependencies
 /frontend-nudenet-demo-reactjs/node_modules
@@ -17,6 +18,7 @@
 /frontend-nudenet-demo-reactjs/.env.development.local
 /frontend-nudenet-demo-reactjs/.env.test.local
 /frontend-nudenet-demo-reactjs/.env.production.local
+/frontend-nudenet-demo-reactjs/.env*
 
 /frontend-nudenet-demo-reactjs/npm-debug.log*
 /frontend-nudenet-demo-reactjs/yarn-debug.log*

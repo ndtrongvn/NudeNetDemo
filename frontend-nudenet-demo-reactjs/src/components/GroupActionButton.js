@@ -13,16 +13,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function GroupActionButton({
-  isDisable,
-  handleOpenLightBox,
-  handleDownloadImage,
-}) {
+function GroupActionButton({ isDisable, onViewImage, downloadUrl }) {
   const classes = useStyles();
   return (
     <div className={classes.buttonGroup}>
       <Button
-        onClick={handleOpenLightBox}
+        onClick={onViewImage}
         startIcon={<VisibilityIcon />}
         color="primary"
         variant="contained"
@@ -31,7 +27,8 @@ function GroupActionButton({
         View
       </Button>
       <Button
-        onClick={handleDownloadImage}
+        // onClick={handleDownloadImage}
+        href={downloadUrl}
         disabled={isDisable}
         variant="contained"
         color="primary"

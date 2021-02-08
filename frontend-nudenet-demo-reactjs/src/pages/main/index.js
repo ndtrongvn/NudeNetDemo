@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import { makeStyles, CssBaseline } from "@material-ui/core";
 import CustomDrawer from "./CustomDrawer";
 import CustomAppBar from "./CustomAppBar";
 import MainArea from "./MainArea";
-
+import { Lightbox } from "react-modal-image";
 import HTTPRequest from "services/http-request";
 
 const useStyles = makeStyles((theme) => ({
@@ -39,8 +39,10 @@ const useStyles = makeStyles((theme) => ({
 const Main = () => {
   const RequestServer = new HTTPRequest();
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [historyItems, setHistoryItems] = React.useState([]);
+  const [open, setOpen] = useState(false);
+  const [historyItems, setHistoryItems] = useState([]);
+  const [openLightBox, setOpenLightBox] = useState(false);
+  const [lbImageUrl, setLbImageUrl] = useState("");
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -50,7 +52,12 @@ const Main = () => {
     setOpen(false);
   };
 
-  React.useEffect(() => {
+  const handleLightBoxOpen = (url) => {
+    setLbImageUrl(url);
+    setOpenLightBox(true);
+  };
+
+  useEffect(() => {
     if (open) {
       RequestServer.getHistories().then((res) => {
         setHistoryItems(res.data.histories);
@@ -64,13 +71,25 @@ const Main = () => {
       <CustomAppBar onHandleOpenDrawer={handleDrawerOpen} open={open} />
       <main className={classes.content}>
         <div className={classes.drawerHeader} />
-        <MainArea />
+        <MainArea handleLightBoxOpen={handleLightBoxOpen} />
       </main>
       <CustomDrawer
         onHandleClose={handleDrawerClose}
         open={open}
         historyItems={historyItems}
+        onViewImage={handleLightBoxOpen}
       />
+      {openLightBox && (
+        <Lightbox
+          medium={lbImageUrl}
+          large={lbImageUrl}
+          hideDownload={true}
+          showRotate={true}
+          hideZoom={true}
+          alt="View full screen"
+          onClose={() => setOpenLightBox(false)}
+        />
+      )}
     </div>
   );
 };
