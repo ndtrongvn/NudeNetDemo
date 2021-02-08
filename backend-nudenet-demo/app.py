@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, jsonify, send_file
 from werkzeug.utils import secure_filename
 from NudeNet.nudenet.detector import Detector
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from glob import glob
 import json
 
@@ -55,6 +55,7 @@ def hello_world():
     return jsonify(error=True,message='Hello World!!!', buzz='beeeeezz'), 200
 
 @app.route('/process', methods=['POST'])
+@cross_origin(origin='*')
 def process_file():
     # Handle undefined request
     if 'image' not in request.files:
@@ -83,6 +84,7 @@ def process_file():
         return jsonify(error=True,message='Unsupport file!'), 400
 
 @app.route('/histories')
+@cross_origin(origin='*')
 def get_histories():
     images = []
     histories = []
@@ -99,6 +101,11 @@ def get_histories():
     for hist in sorted_histories:
         response_datas.append(hist.toJSON())
     return jsonify(histories=response_datas)
+
+@app.route('/download/<filename>')
+def download_image(filename):
+    filepath = app.config['OUTPUT_FOLDER'] + filename
+    return send_file(filepath, as_attachment=True)
 
 class file_info:
     def __init__(self, url, name, size, time_create):
