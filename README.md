@@ -7,7 +7,7 @@
 - Request
     - Body Type: Form Data
     - Body Params: 
-        - image: type file
+        - key: image -- value: input image file
 - Response JSON
     - key: message -- value: Response message
     - key: result_image_url -- value: response_image_filtered_url
@@ -15,7 +15,7 @@
 - Desc: Get all proceed files
 - Method: GET
 - Request params NONE
-- Response
+- Response JSON
     - key: histories -- value: JSONArray {url, name, size, time_create}
 3. /download/<filename>
 - Desc: Download proceed file by filename
