@@ -1,26 +1,31 @@
 # NudeNetDemo
 
 ## APIs
-1. /process 
-- Desc: Processing input image from form-data request
+### Processing input image from form-data request 
+- Endpoint: /process 
 - Method: POST
 - Request
     - Body Type: Form Data
     - Body Params: 
-        - key: image -- value: input image file
+        - key: `image` -- value: input image file
 - Response JSON
-    - key: message -- value: Response message
-    - key: result_image_url -- value: response_image_filtered_url
-2. /histories
-- Desc: Get all proceed files
+    - key: `message` -- value: Response message
+    - key: `result_image_url` -- value: response_image_filtered_url
+### Get all proceed images 
+- Endpoint: /histories
 - Method: GET
 - Request params NONE
-- Response JSON
-    - key: histories -- value: JSONArray {url, name, size, time_create}
-3. /download/<filename>
-- Desc: Download proceed file by filename
+- Response
+    - key: `histories` -- value: JSONArray of object{  
+    `url`: string,  
+    `name`: string,  
+    `size`: number bytes unit,  
+    `time_create`: timestamps  
+    }
+### Download proceed image by filename
+- Endpoint: /download/&lt;filename&gt;
 - Method: GET
 - Request params
-    - filename: string (file basename from /histories)
+    - `filename`: string (file basename from /histories)
 - Response
     - Image output
