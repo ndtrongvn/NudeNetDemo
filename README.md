@@ -1,6 +1,6 @@
 # NudeNetDemo
 
-## APIs
+## APIs Backend
 ### Processing input image from form-data request 
 - Endpoint: /process 
 - Method: POST
@@ -29,3 +29,6 @@
     - `filename`: string (file basename from /histories)
 - Response
     - Image output
+
+## Environments Frontend
+- Configs .env variable REACT_APP_DOMAIN=<your backend hosting address>
