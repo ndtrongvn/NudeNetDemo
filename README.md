@@ -31,4 +31,4 @@
     - Image output
 
 ## Environments Frontend
-- Configs .env variable REACT_APP_DOMAIN=<your backend hosting address>
+- Configs .env variable REACT_APP_DOMAIN=&lt;your backend hosting address&gt;
