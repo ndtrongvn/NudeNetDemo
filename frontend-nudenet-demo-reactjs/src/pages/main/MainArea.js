@@ -134,7 +134,7 @@ function MainArea({ handleLightBoxOpen }) {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box display="flex" flexDirection="column" alignItems="center">
-              <Typography variant="overline">NudeNet Filtered Image</Typography>
+              <Typography variant="overline">Censored Filtered Image</Typography>
               <Paper className={classes.imageArea} elevation={0}>
                 {resultImageURL != null && (
                   <Image

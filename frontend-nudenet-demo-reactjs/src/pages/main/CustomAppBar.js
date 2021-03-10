@@ -47,7 +47,7 @@ function CustomAppBar({ onHandleOpenDrawer, open }) {
     >
       <Toolbar>
         <Typography variant="h6" noWrap className={classes.title}>
-          NudeNet Demo
+          Censored Demo
         </Typography>
         <Button
           color="inherit"
